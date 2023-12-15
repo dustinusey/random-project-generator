@@ -28,15 +28,27 @@ const tools = [
     'react',
     'vue',
     'svelte',
-    'angular'
+    'angular',
+    'react & tailwind',
+    'vanilla javascript & tailwind'
 ];
 
 function App() {
 
+    // updates the idea copy (you're going to build a...)
+    const [ideaCopyStatus, setIdeaCopyStatus] = useState(false);
     const [idea, setIdea] = useState('');
+
+    // updates the tool copy (and you're going to build it with...)
+    const [toolCopyStatus, setToolCopyStatus] = useState(false);
     const [tool, setTool] = useState('');
 
+    // generate random project btn
+    const [btn, setBtn] = useState(true)
+
     const generateProject = () => {
+        // removes button from UI
+        setBtn(false);
 
         // function for selecting random idea
         const createRandomIdea = () => {
@@ -52,31 +64,37 @@ function App() {
 
         // select random idea every 50 milliseconds
         const ideaAnimationInterval = setInterval(() => {
+            setIdeaCopyStatus(true)
             createRandomIdea();
-        }, 50);
+        }, 100); //interval for switching options
 
-        // select random tool every 50 milliseconds
-        const toolAnimationInterval = setInterval(() => {
-            createRandomTool();
-        }, 50);
-
-        // end animation for idea
         setTimeout(() => {
             clearInterval(ideaAnimationInterval);
-        }, 5000);
+            // select random tool every 50 milliseconds
+            const toolAnimationInterval = setInterval(() => {
+                setTimeout(() => {
+                    setToolCopyStatus(true)
+                    createRandomTool();
+                }, 1500) // duration until starting to choose tool
+            }, 100); //interval for random switching options
 
-        // end animation for tool 
-        setTimeout(() => {
-            clearInterval(toolAnimationInterval);
-        }, 10000);
+            // end animation for tool 
+            setTimeout(() => {
+                clearInterval(toolAnimationInterval);
+            }, 6000); // how long you search for a tool
+        }, 6000); // time for duration of choosing an idea
+
+        
         
     }
 
     return (
         <div className="container">
-            <p>{idea}</p>
-            <p>{tool}</p>
-            <button onClick={generateProject}>generate</button>
+            { ideaCopyStatus && <p className="idea-copy">You&apos;re going to build a...</p> }
+            { idea !== '' && <p className="idea">{idea}</p> }
+            { toolCopyStatus && <p className="tool-copy">and you&apos;re going to build it with...</p> }
+            { tool !== '' && <p className="tool">{tool}</p> }
+            { btn && <button onClick={generateProject}>Generate Random Project</button> }
         </div>
     )
 }
